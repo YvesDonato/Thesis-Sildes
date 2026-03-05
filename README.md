@@ -20,6 +20,26 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Docker Compose / Coolify
+
+This repo now includes:
+
+- `Dockerfile` (multi-stage production build)
+- `docker-compose.yml` (service on port `3000`)
+- `.dockerignore`
+
+Run locally with Docker Compose:
+
+```bash
+SESSION_SECRET="replace-with-a-strong-secret" docker compose up --build
+```
+
+For Coolify:
+
+- Deploy as a Docker Compose application using this `docker-compose.yml`.
+- Set `SESSION_SECRET` in Coolify environment variables (do not use the default placeholder).
+- Exposed service port is `3000`.
+
 ## LaTeX Block Rendering
 
 Slides support fenced blocks with `latex +render`.

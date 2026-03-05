@@ -1,0 +1,14 @@
+services:
+  thesis-slides:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: thesis-slides:latest
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      SESSION_SECRET: ${SESSION_SECRET:-replace-with-a-strong-secret}
+    ports:
+      - "3000:3000"
