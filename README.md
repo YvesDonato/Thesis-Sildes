@@ -25,7 +25,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 This repo now includes:
 
 - `Dockerfile` (multi-stage production build)
-- `docker-compose.yml` (service on port `3000`)
+- `docker-compose.yml` and `docker-compose.yaml` (service on port `3000`)
 - `.dockerignore`
 
 Run locally with Docker Compose:
@@ -36,7 +36,7 @@ SESSION_SECRET="replace-with-a-strong-secret" docker compose up --build
 
 For Coolify:
 
-- Deploy as a Docker Compose application using this `docker-compose.yml`.
+- Deploy as a Docker Compose application using `docker-compose.yaml`.
 - Set `SESSION_SECRET` in Coolify environment variables (do not use the default placeholder).
 - Exposed service port is `3000`.
 
