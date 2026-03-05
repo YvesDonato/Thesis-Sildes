@@ -1,12 +1,10 @@
-import { NextResponse } from "next/server";
 import { clearAdminSessionCookie } from "../../../lib/admin-auth";
+import { redirectToAdmin } from "../../../lib/http-redirect";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
-  const response = NextResponse.redirect(new URL("/admin", request.url), {
-    status: 303,
-  });
+export async function POST() {
+  const response = redirectToAdmin();
   clearAdminSessionCookie(response);
   return response;
 }

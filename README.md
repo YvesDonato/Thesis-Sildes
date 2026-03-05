@@ -52,6 +52,7 @@ Unsupported LaTeX constructs are left as fenced code blocks and the app logs a w
 
 - `GET /admin` provides presenter controls.
 - Password is `password` (basic protection as requested).
+- Form login/logout redirects use relative `Location: /admin` for reverse-proxy compatibility (Coolify).
 - Viewer route `/` follows presenter slide moves globally via SSE (`/api/presenter/stream`).
 - Incremental bullet reveals are also synchronized globally (`slideIndex` + `revealStep`).
 - Viewer route is follower-only (no local controls), so all open viewers stay on the presenter timeline.

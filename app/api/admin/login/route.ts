@@ -3,6 +3,7 @@ import {
   ADMIN_PASSWORD,
   applyAdminSessionCookie,
 } from "../../../lib/admin-auth";
+import { redirectToAdmin } from "../../../lib/http-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -28,9 +29,7 @@ export async function POST(request: Request) {
 
   if (password !== ADMIN_PASSWORD) {
     if (isFormRequest) {
-      return NextResponse.redirect(new URL("/admin", request.url), {
-        status: 303,
-      });
+      return redirectToAdmin();
     }
 
     return NextResponse.json(
@@ -39,9 +38,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const response = isFormRequest
-    ? NextResponse.redirect(new URL("/admin", request.url), { status: 303 })
-    : NextResponse.json({ ok: true });
+  const response = isFormRequest ? redirectToAdmin() : NextResponse.json({ ok: true });
 
   applyAdminSessionCookie(response);
   return response;
