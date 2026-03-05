@@ -20,6 +20,22 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## LaTeX Block Rendering
+
+Slides support fenced blocks with `latex +render`.
+
+For table blocks, the app parses `\begin{tabular}...\end{tabular}` and renders them as HTML tables directly in slides.
+
+Unsupported LaTeX constructs are left as fenced code blocks and the app logs a warning.
+
+## Admin Presenter Mode
+
+- `GET /admin` provides presenter controls.
+- Password is `password` (basic protection as requested).
+- Viewer route `/` follows presenter slide moves globally via SSE (`/api/presenter/stream`).
+- Incremental bullet reveals are also synchronized globally (`slideIndex` + `revealStep`).
+- Viewer route is follower-only (no local controls), so all open viewers stay on the presenter timeline.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
