@@ -245,10 +245,10 @@ function renderTableHtml(parsed: ParsedTable) {
 
   const head = [
     "<thead>",
-    `<tr class="${headerRow.topRule ? "border-t border-[#d8cfbe]" : ""}">`,
+    `<tr class="${headerRow.topRule ? "border-t border-border" : ""}">`,
     ...normalizedHeader.map(
       (cell) =>
-        `<th class="border border-[#d8cfbe] px-3 py-2 text-left font-semibold">${cell || "&nbsp;"}</th>`,
+        `<th class="border border-border px-3 py-2 text-left font-semibold">${cell || "&nbsp;"}</th>`,
     ),
     "</tr>",
     "</thead>",
@@ -259,10 +259,10 @@ function renderTableHtml(parsed: ParsedTable) {
     ...bodyRows.map((row) => {
       const normalized = padRowCells(row.cells, parsed.columnCount);
       return [
-        `<tr class="${row.topRule ? "border-t border-[#d8cfbe]" : ""}">`,
+        `<tr class="${row.topRule ? "border-t border-border" : ""}">`,
         ...normalized.map(
           (cell) =>
-            `<td class="border border-[#d8cfbe] px-3 py-2 align-top">${cell || "&nbsp;"}</td>`,
+            `<td class="border border-border px-3 py-2 align-top">${cell || "&nbsp;"}</td>`,
         ),
         "</tr>",
       ].join("");

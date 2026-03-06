@@ -7,8 +7,10 @@ const EXAMPLE_PATH = path.join(
   "content/examples/01-thesis-defense.md",
 );
 
-const SLIDE_SPLIT = /^\s*(?:---|<!--\s*end_slide\s*-->)\s*$/gim;
 const FRONT_MATTER = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/;
+const SLIDE_SEPARATOR = /^\s*---\s*$/;
+const END_SLIDE_SEPARATOR = /^\s*<!--\s*end_slide\s*-->\s*$/i;
+const CODE_FENCE = /^\s*```/;
 const DEFAULT_DECK_TITLE = "Markdown Slide Maker";
 
 type FrontMatter = {
@@ -69,10 +71,39 @@ function parseFrontMatter(markdown: string) {
 }
 
 function splitSlides(markdown: string) {
-  return markdown
-    .split(SLIDE_SPLIT)
-    .map((slide) => slide.trim())
-    .filter((slide) => slide.length > 0);
+  const lines = normalizeLineEndings(markdown).split("\n");
+  const slides: string[] = [];
+  let buffer: string[] = [];
+  let inCodeFence = false;
+
+  const pushSlide = () => {
+    const slide = buffer.join("\n").trim();
+    if (slide.length > 0) {
+      slides.push(slide);
+    }
+    buffer = [];
+  };
+
+  for (const line of lines) {
+    if (CODE_FENCE.test(line)) {
+      inCodeFence = !inCodeFence;
+      buffer.push(line);
+      continue;
+    }
+
+    if (
+      !inCodeFence &&
+      (SLIDE_SEPARATOR.test(line) || END_SLIDE_SEPARATOR.test(line))
+    ) {
+      pushSlide();
+      continue;
+    }
+
+    buffer.push(line);
+  }
+
+  pushSlide();
+  return slides;
 }
 
 function patchExampleImagePaths(markdown: string) {

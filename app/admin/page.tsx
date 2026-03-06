@@ -14,9 +14,9 @@ export default async function AdminPage() {
   if (!isAuthenticated) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-md items-center px-4">
-        <section className="w-full rounded-2xl border border-[#d8cfbe] bg-[#fffdf8] p-6 shadow-[0_24px_50px_rgba(64,50,29,0.13)]">
+        <section className="w-full rounded-2xl border border-border bg-surface p-6 shadow-[var(--theme-shadow-elevated)]">
           <h1 className="mb-2 text-2xl font-semibold">Admin Login</h1>
-          <p className="mb-4 text-sm text-[#726955]">
+          <p className="mb-4 text-sm text-muted">
             Enter the password to control global slide position.
           </p>
           <form action="/api/admin/login" method="post" className="space-y-3">
@@ -26,12 +26,12 @@ export default async function AdminPage() {
                 name="password"
                 type="password"
                 required
-                className="w-full rounded-lg border border-[#d8cfbe] px-3 py-2"
+                className="w-full rounded-lg border border-border px-3 py-2"
               />
             </label>
             <button
               type="submit"
-              className="rounded-full bg-[#1e6f74] px-4 py-2 font-semibold text-[#f9fdfa] transition-colors duration-150 hover:bg-[#154f53]"
+              className="rounded-full bg-brand px-4 py-2 font-semibold text-on-brand transition-colors duration-150 hover:bg-brand-hover"
             >
               Login
             </button>
@@ -47,30 +47,33 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <div className="min-h-screen">
-      <header className="mx-auto flex w-full max-w-[68rem] items-center justify-between px-4 pt-4">
+    <div className="flex h-screen flex-col overflow-hidden">
+      <header className="mx-auto flex w-full max-w-[68rem] shrink-0 items-center justify-between px-4 pt-4">
         <div>
           <h1 className="text-xl font-semibold">Admin Controller</h1>
-          <p className="text-sm text-[#726955]">
+          <p className="text-sm text-muted">
             Session cookie: <code>{ADMIN_COOKIE_NAME}</code>
           </p>
         </div>
         <form action="/api/admin/logout" method="post">
           <button
             type="submit"
-            className="rounded-full border border-[#d8cfbe] bg-white px-4 py-2 font-semibold text-[#262219] transition-colors duration-150 hover:bg-[#f2efe8]"
+            className="rounded-full border border-border bg-paper px-4 py-2 font-semibold text-ink transition-colors duration-150 hover:bg-page-base"
           >
             Logout
           </button>
         </form>
       </header>
-      <SyncedSlideDeck
-        slides={deck.slides}
-        deckTitle={deck.deckTitle}
-        syncRole="admin"
-        initialSlideIndex={presenterState.slideIndex}
-        initialRevealStep={presenterState.revealStep}
-      />
+      <div className="flex-1 min-h-0">
+        <SyncedSlideDeck
+          slides={deck.slides}
+          deckTitle={deck.deckTitle}
+          syncRole="admin"
+          initialSlideIndex={presenterState.slideIndex}
+          initialRevealStep={presenterState.revealStep}
+          noScroll
+        />
+      </div>
     </div>
   );
 }

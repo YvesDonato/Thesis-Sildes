@@ -88,6 +88,7 @@ Background - CoT Prompting
 - Two types of CoT:
   - Multi-Shot CoT or just CoT
     - Does use examples within the prompt.
+<!-- pause -->
 ```markdown
 Q: Roger has 5 tennis balls. He buys 2 more cans of tennis
 balls. Each can has 3 tennis balls. How many tennis balls does
@@ -103,6 +104,7 @@ Figure 1: Example of CoT as per [3]
 <!-- alignment: left -->
   - Zero-Shot CoT
     - Does not use examples within the prompt.
+<!-- pause -->
 ```markdown
 Q: On average Joe throws 25
 punches per minute. A fight
@@ -120,6 +122,7 @@ Figure 2: Example of CoT as per [1]
   - "Let's think step by step"
     - The highest increase of accuracy
 - How does CoT prompting compare to baseline? 
+<!-- pause -->
 ```latex +render
 \begin{table}[h]
     \par
@@ -152,6 +155,7 @@ What is Reinforcement Learning with Human Feedback in the context of LLMs?
 - In context of reasoning models:
   - Uses CoT Prompting examples (Or any other reasoning prompting method).
   - Makes models closer aligned to what was given in the examples.
+<!-- pause -->
 ```mermaid +render +width:100%
 flowchart LR
     Examples --> RLHFAlgo[RLHF Algorithm] --> LLM --> CloserAlignedLLM[Closer Aligned LLM]
@@ -161,6 +165,7 @@ Figure 4: Example of a RLHF pipeline as per [4]
 <!-- alignment: left -->
 
 - How does RLHF-CoT compare to baseline? 
+<!-- pause -->
 ```latex +render
 \begin{table}[h]
     \par
@@ -188,6 +193,7 @@ Figure 5: Results of RLHF-CoT as per [2]
 Thesis Statement
 ===
 Taken directly from the Thesis:
+<!-- pause -->
 ```markdown
 This paper examines the differences between Zero-Shot-Chain-of-Thought Prompting
 and Reinforcement Learning with Human Feedback in both performance and time
@@ -226,6 +232,7 @@ The process of benchmarking would be as follows (AIME 2025):
 7. We do this for every question and then compare with the original.
 <!-- new_lines: 4 -->
 <!-- alignment: center -->
+<!-- pause -->
 ```markdown
 {"question_num": 0, "model_name": "DeepSeek-R1-Distill-Llama-8B", "answer": "70", "time": 24.789}
 ```
@@ -243,6 +250,7 @@ What does this pipeline look like?
 <!-- column: 0 -->
 
 **DeepSeek-R1:8b**
+<!-- pause -->
 ```python {1|2|3|5-14|12|16|1-16} +line_numbers +exec
 /// from ollama import Client
 /// import polars as pl
@@ -273,6 +281,7 @@ prompt = "What is 1 + 1" # Proxy for benchmark
 <!-- pause -->
 
 **Llama3.1:8b**
+<!-- pause -->
 ```python {2|1-16} +line_numbers +exec
 /// from ollama import Client
 /// import polars as pl
@@ -306,6 +315,7 @@ Methodology - Revised Pipeline
 ===
 <!-- column_layout: [1, 1] -->
 <!-- column: 0 -->
+<!-- pause -->
 ```mermaid +render +width:75%
 flowchart TD
     Input[Benchmark Questions] --> LLM[LLM Answer Generator] --> LLM2[LLM Extractor] --> Output
@@ -316,6 +326,7 @@ flowchart TD
 **DeepSeek-R1:8b** with **Llama3.1:8b**
 
 
+<!-- pause -->
 ```python {1-24|18|20|22|1-24} +line_numbers +exec
 /// from ollama import Client
 /// import polars as pl
@@ -413,6 +424,7 @@ What are the reasons why CoT Prompting does so poorly? (speculation)
 - Well..
   - The paper actually supports this:
 
+<!-- pause -->
 ![image:width:25%](/examples/thesis/image(1).png)
 <!-- alignment: center -->
 Figure 9: Results of ZS and ZS-CoT as per [1]

@@ -1,6 +1,58 @@
 @import "tailwindcss";
 
+:root {
+  --theme-page-base: #6200EE;
+  --theme-page-base-alt: #6200EE;
+  --theme-surface: #e3e6f6;
+  --theme-paper: #ffffff;
+  --theme-ink: #262219;
+  --theme-muted: #726955;
+  --theme-border: #d8cfbe;
+  --theme-brand: #6579e2;
+  --theme-brand-hover: #98a4e6;
+  --theme-on-brand: #f9fdfa;
+  --theme-code-bg: #1f2428;
+  --theme-code-fg: #e5ecf3;
+  --theme-overlay-highlight: #6200EE;
+  --theme-shadow-elevated: 0 24px 50px rgba(64, 50, 29, 0.13);
+  --theme-page-background: #f8f9fd;
+}
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-page-base: var(--theme-page-base);
+  --color-page-base-alt: var(--theme-page-base-alt);
+  --color-surface: var(--theme-surface);
+  --color-paper: var(--theme-paper);
+  --color-ink: var(--theme-ink);
+  --color-muted: var(--theme-muted);
+  --color-border: var(--theme-border);
+  --color-brand: var(--theme-brand);
+  --color-brand-hover: var(--theme-brand-hover);
+  --color-on-brand: var(--theme-on-brand);
+  --color-code-bg: var(--theme-code-bg);
+  --color-code-fg: var(--theme-code-fg);
+}
+
+@keyframes slide-next-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(18px, 0, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.slide-next-enter {
+  animation: slide-next-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-next-enter {
+    animation: none;
+  }
 }

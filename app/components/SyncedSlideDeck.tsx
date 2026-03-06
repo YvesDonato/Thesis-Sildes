@@ -9,6 +9,7 @@ type SyncedSlideDeckProps = {
   syncRole: "viewer" | "admin";
   initialSlideIndex: number;
   initialRevealStep: number;
+  noScroll?: boolean;
 };
 
 type PresenterState = {
@@ -38,6 +39,7 @@ export default function SyncedSlideDeck({
   syncRole,
   initialSlideIndex,
   initialRevealStep,
+  noScroll = false,
 }: SyncedSlideDeckProps) {
   const [externalCursor, setExternalCursor] = useState<SlideCursor>(() => ({
     slideIndex: toNonNegativeInteger(initialSlideIndex),
@@ -132,6 +134,7 @@ export default function SyncedSlideDeck({
       syncRole={syncRole}
       externalSlideIndex={externalCursor.slideIndex}
       externalRevealStep={externalCursor.revealStep}
+      noScroll={noScroll}
       onCursorCommitted={
         syncRole === "admin" ? onCursorCommitted : undefined
       }

@@ -1,0 +1,138 @@
+Markdown Commands Reference
+===========================
+
+This file documents the markdown features and comment directives supported by this slide app.
+
+
+1) Front Matter (optional)
+--------------------------
+Place at the top of the markdown file:
+
+---
+title: "Your Deck Title"
+sub_title: "Optional Subtitle"
+author: "Your Name"
+---
+
+Supported keys:
+- title
+- sub_title
+- author
+
+Notes:
+- A title slide is generated from front matter when present.
+- The app header title uses `title` when available.
+
+
+2) Slide Separation
+-------------------
+You can split slides using either:
+- `---`
+- `<!-- end_slide -->`
+
+Important:
+- Slide separators are only recognized outside fenced code blocks.
+- A literal `---` inside fenced code is treated as code text, not a slide break.
+
+
+3) Supported Directives (HTML comments)
+---------------------------------------
+Directives affect the content that follows them.
+
+Important:
+- Directives are recognized only outside fenced code blocks.
+- Inside fenced code, directive text is treated as literal code content.
+
+- `<!-- alignment: left -->`
+  - Left aligns the current content chunk.
+
+- `<!-- alignment: center -->`
+  - Centers text/media for the current content chunk.
+
+- `<!-- incremental_lists: true -->`
+  - Enables incremental reveal for list items in following content.
+
+- `<!-- incremental_lists: false -->`
+  - Disables incremental list reveal for following content.
+
+- `<!-- list_item_newlines: N -->`
+  - Normalizes spacing between list items for markdown parsing.
+  - Example: `<!-- list_item_newlines: 2 -->`
+
+- `<!-- pause -->`
+  - Creates the next reveal step boundary.
+  - Content after this marker appears on a later `Next`.
+
+- `<!-- pause: N -->`
+  - Accepted format; behaves like `<!-- pause -->`.
+  - The numeric value is currently not used.
+
+- `<!-- new_line -->` and `<!-- new_lines: N -->`
+  - Accepted but currently ignored (no rendering effect).
+
+
+4) Reveal Behavior
+------------------
+- If a slide has revealable content, it starts at reveal step 1.
+- `pause` reveals entire chunks (images, paragraphs, code blocks, tables, etc.).
+- `incremental_lists: true` reveals list items one-by-one.
+- Both reveal systems are synchronized between `/admin` and `/` via presenter state.
+
+
+5) Regular Markdown Support
+---------------------------
+- Headings: `#`, `##`, `###`, ...
+- Paragraphs and emphasis (`*italic*`, `**bold**`)
+- Bullet and numbered lists
+- Blockquotes
+- Links
+- Tables (GFM)
+- Fenced code blocks:
+  - ```js
+    console.log("hello");
+    ```
+- Images:
+  - `![alt text](/path/to/image.png)`
+
+
+6) Math and LaTeX
+-----------------
+- Inline math: `$a^2 + b^2 = c^2$`
+- Block math: `$$ ... $$`
+
+Special LaTeX table render block:
+
+```latex +render
+\begin{table}
+  \begin{tabular}{...}
+    ...
+  \end{tabular}
+\end{table}
+```
+
+Notes:
+- `latex +render` is parsed for `\begin{tabular}...\end{tabular}` and converted to HTML table output.
+- If parsing fails, the original fenced code block is left as-is.
+
+
+7) Quick Example
+----------------
+---
+title: "Example Deck"
+sub_title: "Demo"
+author: "Presenter"
+---
+
+<!-- alignment: center -->
+# Slide 1
+Intro text
+<!-- pause -->
+![diagram](/examples/diagram.png)
+<!-- end_slide -->
+
+<!-- incremental_lists: true -->
+<!-- list_item_newlines: 2 -->
+# Slide 2
+- First point
+- Second point
+- Third point

@@ -40,6 +40,14 @@ For Coolify:
 - Set `SESSION_SECRET` in Coolify environment variables (do not use the default placeholder).
 - Exposed service port is `3000`.
 
+## Theme Tokens
+
+Theme colors are centralized in `app/globals.css` under `:root` (`--theme-*`) and mapped to Tailwind tokens in `@theme inline`.
+
+- Update colors in one place: `app/globals.css`
+- UI components now consume semantic classes like `bg-surface`, `text-muted`, `border-border`, `bg-brand`
+- Main page backdrop comes from `--theme-page-background` (built from `--theme-page-base`, `--theme-page-base-alt`, and `--theme-overlay-highlight`)
+
 ## LaTeX Block Rendering
 
 Slides support fenced blocks with `latex +render`.
@@ -48,11 +56,19 @@ For table blocks, the app parses `\begin{tabular}...\end{tabular}` and renders t
 
 Unsupported LaTeX constructs are left as fenced code blocks and the app logs a warning.
 
+## Progressive Reveal
+
+- `<!-- pause -->` creates the next reveal step for subsequent content on the same slide.
+- This applies to non-list content too (images, paragraphs, code blocks, tables, etc.).
+- `<!-- incremental_lists: true -->` still reveals list items progressively.
+- Both systems are synchronized globally through presenter state (`slideIndex` + `revealStep`) across `/admin` and `/`.
+
 ## Admin Presenter Mode
 
 - `GET /admin` provides presenter controls.
 - Password is `password` (basic protection as requested).
 - Form login/logout redirects use relative `Location: /admin` for reverse-proxy compatibility (Coolify).
+- Admin route is viewport-locked (single-page, no scroll) with auto-scaling slide content.
 - Viewer route `/` follows presenter slide moves globally via SSE (`/api/presenter/stream`).
 - Incremental bullet reveals are also synchronized globally (`slideIndex` + `revealStep`).
 - Viewer route is follower-only (no local controls), so all open viewers stay on the presenter timeline.
