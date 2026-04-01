@@ -10,10 +10,16 @@ import remarkMath from "remark-math";
 type SlideDeckProps = {
   slides: string[];
   deckTitle: string;
+  deckSubtitle?: string;
   syncRole?: "viewer" | "admin";
   externalSlideIndex?: number;
   externalRevealStep?: number;
   noScroll?: boolean;
+  embedded?: boolean;
+  showHeader?: boolean;
+  showNavigation?: boolean;
+  articleClassName?: string;
+  viewMode?: "default" | "audience";
   onCursorCommitted?: (cursor: {
     slideIndex: number;
     revealStep: number;
@@ -46,6 +52,7 @@ type RenderChunk = SlideChunk & {
   visibleListItems: number | null;
 };
 
+type SlideDeckViewMode = "default" | "audience";
 type NavigationIntent = "next" | "previous" | "jump" | "external";
 
 type TreeNode = {
@@ -88,6 +95,90 @@ const ARTICLE_CLASS_NO_SCROLL = [
   "bg-surface p-[clamp(1.25rem,3.2vw,2.75rem)] shadow-[var(--theme-shadow-elevated)] leading-[1.55]",
   ...ARTICLE_CLASS_COMMON,
 ].join(" ");
+
+const AUDIENCE_ARTICLE_CLASS = [
+  "relative w-full overflow-hidden rounded-[2rem] bg-audience-surface text-audience-ink",
+  "px-[clamp(1.5rem,4vw,4.5rem)] py-[clamp(1.5rem,4vw,4rem)]",
+  "shadow-[0_40px_120px_rgba(25,28,30,0.14)]",
+  "min-h-[38rem] lg:min-h-[44rem]",
+].join(" ");
+
+const AUDIENCE_CONTENT_CLASS = [
+  "w-[72rem] max-w-none",
+  "sm:w-[76rem] lg:w-[82rem]",
+].join(" ");
+
+const AUDIENCE_MARKDOWN_CLASS = [
+  "[&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
+  "[&_h1]:mt-0 [&_h1]:mb-6 [&_h1]:font-headline [&_h1]:text-[clamp(2.2rem,4.9vw,4.35rem)] [&_h1]:font-extrabold [&_h1]:leading-[1.05] [&_h1]:tracking-[-0.04em] [&_h1]:text-audience-ink",
+  "[&_h2]:mt-8 [&_h2]:mb-4 [&_h2]:font-headline [&_h2]:text-[clamp(1.45rem,2.7vw,2.15rem)] [&_h2]:font-bold [&_h2]:leading-[1.08] [&_h2]:tracking-[-0.03em] [&_h2]:text-audience-ink",
+  "[&_h3]:mt-6 [&_h3]:mb-3 [&_h3]:font-headline [&_h3]:text-[clamp(1.02rem,1.75vw,1.35rem)] [&_h3]:font-bold [&_h3]:leading-tight [&_h3]:text-audience-ink",
+  "[&_p]:max-w-[58rem] [&_p]:text-[clamp(1rem,1.34vw,1.28rem)] [&_p]:leading-[1.68] [&_p]:text-audience-muted",
+  "[&_blockquote]:max-w-[58rem] [&_blockquote]:text-[clamp(1rem,1.28vw,1.22rem)] [&_blockquote]:leading-[1.68]",
+  "[&_ul]:my-5 [&_ol]:my-5 [&_ul]:max-w-[58rem] [&_ol]:max-w-[58rem] [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-7 [&_ol]:pl-7",
+  "[&_li]:text-[clamp(0.98rem,1.22vw,1.16rem)] [&_li]:leading-[1.62] [&_li]:text-audience-ink",
+  "[&_li+li]:mt-2",
+  "[&_a]:text-audience-primary [&_a]:underline-offset-[0.2rem]",
+  "[&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-audience-outline [&_blockquote]:pl-5 [&_blockquote]:text-audience-muted",
+  "[&_pre]:overflow-x-auto [&_pre]:rounded-[1.25rem] [&_pre]:bg-code-bg [&_pre]:px-6 [&_pre]:py-5 [&_pre]:text-code-fg [&_pre]:shadow-[0_24px_60px_rgba(25,28,30,0.24)]",
+  "[&_code]:font-mono",
+  "[&_table]:w-full [&_table]:border-collapse [&_table]:rounded-xl [&_table]:overflow-hidden",
+  "[&_th]:border [&_td]:border [&_th]:border-audience-outline [&_td]:border-audience-outline",
+  "[&_th]:bg-audience-surface-low [&_th]:px-3 [&_td]:px-3 [&_th]:py-2.5 [&_td]:py-2.5 [&_th]:text-left [&_td]:text-left",
+  "[&_img]:block [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-[1.5rem] [&_img]:shadow-[0_24px_64px_rgba(25,28,30,0.16)]",
+].join(" ");
+
+function renderSlideSections(
+  renderedChunks: RenderChunk[],
+  mode: SlideDeckViewMode,
+) {
+  return renderedChunks.map((chunk, index) => {
+    if (!chunk.isVisible) {
+      return null;
+    }
+
+    const remarkPlugins = chunk.incrementalLists
+      ? [
+          remarkGfm,
+          remarkMath,
+          createListItemLimitPlugin(chunk.visibleListItems ?? 0),
+        ]
+      : [remarkGfm, remarkMath];
+    const chunkClassName = [
+      index > 0 ? (mode === "audience" ? "mt-8" : "mt-4") : "",
+      chunk.alignment === "center"
+        ? mode === "audience"
+          ? "text-center [&_p]:mx-auto [&_blockquote]:mx-auto [&_ul]:mx-auto [&_ol]:mx-auto [&_img]:mx-auto"
+          : "text-center [&_ul]:mx-auto [&_ol]:mx-auto [&_ul]:inline-block [&_ol]:inline-block [&_ul]:text-left [&_ol]:text-left [&_img]:mx-auto"
+        : "text-left",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return (
+      <section key={`${chunk.alignment}-${index}`} className={chunkClassName}>
+        <ReactMarkdown
+          remarkPlugins={remarkPlugins}
+          rehypePlugins={[rehypeRaw, rehypeKatex]}
+          components={{
+            img: (props) => (
+              // Using plain img keeps markdown image passthrough behavior.
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                {...props}
+                alt={props.alt ?? ""}
+                loading="lazy"
+                decoding="async"
+              />
+            ),
+          }}
+        >
+          {chunk.normalizedMarkdown}
+        </ReactMarkdown>
+      </section>
+    );
+  });
+}
 
 function clampIndex(index: number, total: number) {
   if (total <= 1) {
@@ -374,11 +465,11 @@ function getRevealMetricsForChunks(chunks: SlideChunk[]): RevealMetrics {
   return { maxRevealStep: 1 + totalRevealActions };
 }
 
-function getMaxRevealStepsForSlide(markdown: string) {
+export function getMaxRevealStepsForSlide(markdown: string) {
   return getRevealMetricsForChunks(parseSlideChunks(markdown)).maxRevealStep;
 }
 
-function getInitialRevealStepForSlide(markdown: string) {
+export function getInitialRevealStepForSlide(markdown: string) {
   const max = getMaxRevealStepsForSlide(markdown);
   return max > 0 ? 1 : 0;
 }
@@ -418,10 +509,16 @@ function shouldAnimateSlideEntry(
 export default function SlideDeck({
   slides,
   deckTitle,
+  deckSubtitle,
   syncRole = "viewer",
   externalSlideIndex,
   externalRevealStep,
   noScroll = false,
+  embedded = false,
+  showHeader = true,
+  showNavigation,
+  articleClassName,
+  viewMode = "default",
   onCursorCommitted,
 }: SlideDeckProps) {
   const total = slides.length;
@@ -437,6 +534,7 @@ export default function SlideDeck({
   const revealStepRef = useRef(initialRevealStep);
   const viewportRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const audienceMeasureRef = useRef<HTMLElement>(null);
   const [contentScale, setContentScale] = useState(1);
   const [slideAnimationKey, setSlideAnimationKey] = useState(0);
   const [animateSlideEntry, setAnimateSlideEntry] = useState(false);
@@ -456,27 +554,42 @@ export default function SlideDeck({
 
     const viewportElement = viewportRef.current;
     const contentElement = contentRef.current;
-    if (!viewportElement || !contentElement) {
+    const measureElement =
+      viewMode === "audience" ? audienceMeasureRef.current : contentElement;
+    if (!viewportElement || !contentElement || !measureElement) {
       return;
     }
 
     const viewportWidth = viewportElement.clientWidth;
     const viewportHeight = viewportElement.clientHeight;
-    const contentWidth = contentElement.offsetWidth;
-    const contentHeight = contentElement.offsetHeight;
-    if (viewportWidth <= 0 || viewportHeight <= 0 || contentWidth <= 0 || contentHeight <= 0) {
+    const contentWidth =
+      viewMode === "audience"
+        ? Math.max(measureElement.scrollWidth, measureElement.offsetWidth)
+        : contentElement.offsetWidth;
+    const contentHeight =
+      viewMode === "audience"
+        ? Math.max(measureElement.scrollHeight, measureElement.offsetHeight)
+        : contentElement.offsetHeight;
+    if (
+      viewportWidth <= 0 ||
+      viewportHeight <= 0 ||
+      contentWidth <= 0 ||
+      contentHeight <= 0
+    ) {
       return;
     }
 
-    const nextScale = Math.min(
-      1,
-      viewportWidth / contentWidth,
-      viewportHeight / contentHeight,
-    );
+    const overflowsViewport =
+      contentWidth - viewportWidth > 1 || contentHeight - viewportHeight > 1;
+    const boundedScale = overflowsViewport
+      ? Math.min(1, viewportWidth / contentWidth, viewportHeight / contentHeight)
+      : 1;
     setContentScale((previousScale) =>
-      Math.abs(previousScale - nextScale) < 0.01 ? previousScale : nextScale,
+      Math.abs(previousScale - boundedScale) < 0.01
+        ? previousScale
+        : boundedScale,
     );
-  }, [noScroll]);
+  }, [noScroll, viewMode]);
 
   useEffect(() => {
     if (!noScroll) {
@@ -497,8 +610,9 @@ export default function SlideDeck({
     }
 
     const viewportElement = viewportRef.current;
-    const contentElement = contentRef.current;
-    if (!viewportElement || !contentElement) {
+    const measureElement =
+      viewMode === "audience" ? audienceMeasureRef.current : contentRef.current;
+    if (!viewportElement || !measureElement) {
       return;
     }
 
@@ -513,14 +627,14 @@ export default function SlideDeck({
         recalculateScale();
       });
       observer.observe(viewportElement);
-      observer.observe(contentElement);
+      observer.observe(measureElement);
     }
 
     return () => {
       window.removeEventListener("resize", onWindowResize);
       observer?.disconnect();
     };
-  }, [noScroll, recalculateScale]);
+  }, [noScroll, recalculateScale, viewMode]);
 
   const goTo = useCallback(
     (
@@ -670,6 +784,10 @@ export default function SlideDeck({
     [chunks],
   );
   const maxRevealSteps = revealMetrics.maxRevealStep;
+  const shouldShowNavigation = showNavigation ?? !isFollower;
+  const visibleSlideNumber = Math.min(currentIndex + 1, Math.max(total, 1));
+  const progressPercent = total > 0 ? (visibleSlideNumber / total) * 100 : 0;
+  const footerMeta = deckSubtitle?.trim() || `Slide ${visibleSlideNumber} of ${total}`;
 
   const hasPendingReveal = maxRevealSteps > 0 && revealStep < maxRevealSteps;
 
@@ -865,30 +983,104 @@ export default function SlideDeck({
       .items;
   }, [chunks, revealStep]);
 
-  const containerClassName = noScroll
-    ? "flex h-full min-h-0 flex-col gap-3 overflow-hidden p-3 sm:p-4"
-    : "flex min-h-screen flex-col gap-4 p-3 sm:p-4";
-  const mainClassName = noScroll
+  const containerClassName = embedded
+    ? "flex h-full min-h-0 flex-col overflow-hidden"
+    : noScroll
+      ? "flex h-full min-h-0 flex-col gap-3 overflow-hidden p-3 sm:p-4"
+      : "flex min-h-screen flex-col gap-4 p-3 sm:p-4";
+  const mainClassName = embedded
     ? "grid min-h-0 flex-1 place-items-center"
-    : "grid flex-1 place-items-center";
-  const articleClassName = noScroll ? ARTICLE_CLASS_NO_SCROLL : ARTICLE_CLASS;
+    : noScroll
+      ? "grid min-h-0 flex-1 place-items-center"
+      : "grid flex-1 place-items-center";
+  const resolvedArticleClassName =
+    articleClassName ?? (noScroll ? ARTICLE_CLASS_NO_SCROLL : ARTICLE_CLASS);
   const animatedArticleClassName = [
-    articleClassName,
+    resolvedArticleClassName,
     animateSlideEntry ? "slide-next-enter" : "",
   ]
     .filter(Boolean)
     .join(" ");
 
+  if (viewMode === "audience") {
+    const audienceArticleClassName = [
+      AUDIENCE_ARTICLE_CLASS,
+      animateSlideEntry ? "slide-next-enter" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return (
+      <main className="relative h-full w-full overflow-hidden bg-audience-background text-audience-ink selection:bg-audience-primary-soft selection:text-audience-primary">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute right-[-8%] top-[-12%] h-[42vw] w-[42vw] rounded-full bg-audience-primary opacity-[0.05] blur-[120px]" />
+          <div className="absolute bottom-[-12%] left-[-8%] h-[34vw] w-[34vw] rounded-full bg-audience-secondary opacity-[0.06] blur-[110px]" />
+        </div>
+
+        <div className="relative z-10 flex h-full w-full items-center justify-center px-5 py-5 sm:px-8 sm:py-8 lg:px-14">
+          <div
+            ref={viewportRef}
+            className="grid h-full w-full min-h-0 min-w-0 place-items-center overflow-hidden"
+          >
+            <div
+              ref={contentRef}
+              className={noScroll ? AUDIENCE_CONTENT_CLASS : "w-full max-w-[92rem]"}
+              style={
+                noScroll
+                  ? {
+                      transform: `scale(${contentScale})`,
+                      transformOrigin: "center center",
+                    }
+                  : undefined
+              }
+            >
+              <article
+                ref={noScroll ? audienceMeasureRef : undefined}
+                key={`slide-${currentIndex}-${slideAnimationKey}`}
+                className={audienceArticleClassName}
+                role="region"
+                aria-label={`Slide ${visibleSlideNumber} of ${total}`}
+              >
+                <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-audience-secondary-soft px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-audience-secondary">
+                  Slide {visibleSlideNumber} of {total}
+                </div>
+                <div className={AUDIENCE_MARKDOWN_CLASS}>
+                  {renderSlideSections(renderedChunks, "audience")}
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div className="pointer-events-none fixed bottom-7 left-6 z-20 flex flex-col gap-1 sm:left-8">
+          <span className="font-headline text-sm font-extrabold tracking-tight text-audience-ink">
+            {deckTitle}
+          </span>
+          <span className="text-xs text-audience-secondary">{footerMeta}</span>
+        </div>
+
+        <div className="fixed bottom-0 left-0 right-0 z-20 h-1 bg-audience-surface-low">
+          <div
+            className="h-full bg-audience-primary transition-all duration-500 ease-out"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <div className={containerClassName}>
-      <header className="flex flex-col gap-1 text-muted sm:flex-row sm:items-baseline sm:justify-between">
-        <h1 className="m-0 text-[clamp(1.1rem,1.8vw,1.35rem)] tracking-[0.02em]">
-          {deckTitle}
-        </h1>
-        <p className="m-0 text-[0.95rem] tabular-nums">
-          Slide {Math.min(currentIndex + 1, total)} of {total}
-        </p>
-      </header>
+      {showHeader ? (
+        <header className="flex flex-col gap-1 text-muted sm:flex-row sm:items-baseline sm:justify-between">
+          <h1 className="m-0 text-[clamp(1.1rem,1.8vw,1.35rem)] tracking-[0.02em]">
+            {deckTitle}
+          </h1>
+          <p className="m-0 text-[0.95rem] tabular-nums">
+            Slide {visibleSlideNumber} of {total}
+          </p>
+        </header>
+      ) : null}
 
       <main className={mainClassName}>
         <div
@@ -911,58 +1103,15 @@ export default function SlideDeck({
               key={`slide-${currentIndex}-${slideAnimationKey}`}
               className={animatedArticleClassName}
               role="region"
-              aria-label={`Slide ${Math.min(currentIndex + 1, total)} of ${total}`}
+              aria-label={`Slide ${visibleSlideNumber} of ${total}`}
             >
-              {renderedChunks.map((chunk, index) => {
-                if (!chunk.isVisible) {
-                  return null;
-                }
-
-                const remarkPlugins = chunk.incrementalLists
-                  ? [
-                      remarkGfm,
-                      remarkMath,
-                      createListItemLimitPlugin(chunk.visibleListItems ?? 0),
-                    ]
-                  : [remarkGfm, remarkMath];
-                const chunkClassName = [
-                  index > 0 ? "mt-4" : "",
-                  chunk.alignment === "center"
-                    ? "text-center [&_ul]:mx-auto [&_ol]:mx-auto [&_ul]:inline-block [&_ol]:inline-block [&_ul]:text-left [&_ol]:text-left [&_img]:mx-auto"
-                    : "text-left",
-                ]
-                  .filter(Boolean)
-                  .join(" ");
-
-                return (
-                  <section key={`${chunk.alignment}-${index}`} className={chunkClassName}>
-                    <ReactMarkdown
-                      remarkPlugins={remarkPlugins}
-                      rehypePlugins={[rehypeRaw, rehypeKatex]}
-                      components={{
-                        img: (props) => (
-                          // Using plain img keeps markdown image passthrough behavior.
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            {...props}
-                            alt={props.alt ?? ""}
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        ),
-                      }}
-                    >
-                      {chunk.normalizedMarkdown}
-                    </ReactMarkdown>
-                  </section>
-                );
-              })}
+              {renderSlideSections(renderedChunks, "default")}
             </article>
           </div>
         </div>
       </main>
 
-      {!isFollower ? (
+      {shouldShowNavigation ? (
         <nav className="flex justify-center gap-3" aria-label="Slide navigation">
           <button
             type="button"

@@ -6,10 +6,12 @@ import SlideDeck from "./SlideDeck";
 type SyncedSlideDeckProps = {
   slides: string[];
   deckTitle: string;
+  deckSubtitle?: string;
   syncRole: "viewer" | "admin";
   initialSlideIndex: number;
   initialRevealStep: number;
   noScroll?: boolean;
+  viewMode?: "default" | "audience";
 };
 
 type PresenterState = {
@@ -36,10 +38,12 @@ function toNonNegativeInteger(value: unknown, fallback = 0) {
 export default function SyncedSlideDeck({
   slides,
   deckTitle,
+  deckSubtitle,
   syncRole,
   initialSlideIndex,
   initialRevealStep,
   noScroll = false,
+  viewMode = "default",
 }: SyncedSlideDeckProps) {
   const [externalCursor, setExternalCursor] = useState<SlideCursor>(() => ({
     slideIndex: toNonNegativeInteger(initialSlideIndex),
@@ -131,10 +135,12 @@ export default function SyncedSlideDeck({
     <SlideDeck
       slides={slides}
       deckTitle={deckTitle}
+      deckSubtitle={deckSubtitle}
       syncRole={syncRole}
       externalSlideIndex={externalCursor.slideIndex}
       externalRevealStep={externalCursor.revealStep}
       noScroll={noScroll}
+      viewMode={viewMode}
       onCursorCommitted={
         syncRole === "admin" ? onCursorCommitted : undefined
       }

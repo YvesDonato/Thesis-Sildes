@@ -1,9 +1,6 @@
 import { cookies } from "next/headers";
-import SyncedSlideDeck from "../components/SyncedSlideDeck";
-import {
-  ADMIN_COOKIE_NAME,
-  isAdminFromCookieStore,
-} from "../lib/admin-auth";
+import AdminPresenterConsole from "../components/AdminPresenterConsole";
+import { isAdminFromCookieStore } from "../lib/admin-auth";
 import { loadDeck } from "../lib/deck-data";
 import { getPresenterState } from "../lib/presenter-state";
 
@@ -47,33 +44,11 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
-      <header className="mx-auto flex w-full max-w-[68rem] shrink-0 items-center justify-between px-4 pt-4">
-        <div>
-          <h1 className="text-xl font-semibold">Admin Controller</h1>
-          <p className="text-sm text-muted">
-            Session cookie: <code>{ADMIN_COOKIE_NAME}</code>
-          </p>
-        </div>
-        <form action="/api/admin/logout" method="post">
-          <button
-            type="submit"
-            className="rounded-full border border-border bg-paper px-4 py-2 font-semibold text-ink transition-colors duration-150 hover:bg-page-base"
-          >
-            Logout
-          </button>
-        </form>
-      </header>
-      <div className="flex-1 min-h-0">
-        <SyncedSlideDeck
-          slides={deck.slides}
-          deckTitle={deck.deckTitle}
-          syncRole="admin"
-          initialSlideIndex={presenterState.slideIndex}
-          initialRevealStep={presenterState.revealStep}
-          noScroll
-        />
-      </div>
-    </div>
+    <AdminPresenterConsole
+      slides={deck.slides}
+      deckTitle={deck.deckTitle}
+      initialSlideIndex={presenterState.slideIndex}
+      initialRevealStep={presenterState.revealStep}
+    />
   );
 }

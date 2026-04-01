@@ -16,11 +16,23 @@
   --theme-overlay-highlight: #6200EE;
   --theme-shadow-elevated: 0 24px 50px rgba(64, 50, 29, 0.13);
   --theme-page-background: #f8f9fd;
+  --theme-audience-background: #f8f9fb;
+  --theme-audience-surface: #ffffff;
+  --theme-audience-surface-low: #f2f4f6;
+  --theme-audience-surface-high: #e6e8ea;
+  --theme-audience-ink: #191c1e;
+  --theme-audience-muted: #454652;
+  --theme-audience-outline: #c5c5d4;
+  --theme-audience-primary: #27389a;
+  --theme-audience-secondary: #48626e;
+  --theme-audience-secondary-soft: #cbe7f5;
+  --theme-audience-primary-soft: #dee0ff;
 }
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-headline: var(--font-manrope);
   --color-page-base: var(--theme-page-base);
   --color-page-base-alt: var(--theme-page-base-alt);
   --color-surface: var(--theme-surface);
@@ -33,6 +45,32 @@
   --color-on-brand: var(--theme-on-brand);
   --color-code-bg: var(--theme-code-bg);
   --color-code-fg: var(--theme-code-fg);
+  --color-audience-background: var(--theme-audience-background);
+  --color-audience-surface: var(--theme-audience-surface);
+  --color-audience-surface-low: var(--theme-audience-surface-low);
+  --color-audience-surface-high: var(--theme-audience-surface-high);
+  --color-audience-ink: var(--theme-audience-ink);
+  --color-audience-muted: var(--theme-audience-muted);
+  --color-audience-outline: var(--theme-audience-outline);
+  --color-audience-primary: var(--theme-audience-primary);
+  --color-audience-secondary: var(--theme-audience-secondary);
+  --color-audience-secondary-soft: var(--theme-audience-secondary-soft);
+  --color-audience-primary-soft: var(--theme-audience-primary-soft);
+}
+
+.presenter-glass-panel {
+  background: rgba(248, 249, 251, 0.82);
+  backdrop-filter: blur(12px);
+  background-image: linear-gradient(
+    to bottom right,
+    rgba(39, 56, 154, 0.05),
+    rgba(65, 81, 179, 0.05)
+  );
+}
+
+.audience-glass-overlay {
+  background: rgba(248, 249, 251, 0.8);
+  backdrop-filter: blur(12px);
 }
 
 @keyframes slide-next-enter {

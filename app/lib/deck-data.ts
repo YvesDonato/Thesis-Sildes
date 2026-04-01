@@ -21,6 +21,7 @@ type FrontMatter = {
 
 export type DeckData = {
   deckTitle: string;
+  deckSubtitle?: string;
   slides: string[];
 };
 
@@ -144,12 +145,14 @@ export async function loadDeck(): Promise<DeckData> {
 
     return {
       deckTitle: frontMatter.title ?? DEFAULT_DECK_TITLE,
+      deckSubtitle: frontMatter.sub_title,
       slides: slides.length > 0 ? slides : FALLBACK_SLIDES,
     };
   } catch (error) {
     console.error("Failed to load markdown slides:", error);
     return {
       deckTitle: DEFAULT_DECK_TITLE,
+      deckSubtitle: undefined,
       slides: FALLBACK_SLIDES,
     };
   }

@@ -1,5 +1,5 @@
 ---
-title: "Comparative Analysis of Chain-of-Thought Prompting Versus Reasoning Large Language Models"
+title: "Effects of Zero-Shot Chain-of-Thought Prompting on Medium Language Models Versus Distilled Reasoning Models"
 sub_title: Thesis Proposal Defence 
 author: Yves Donato
 ---

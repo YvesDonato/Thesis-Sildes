@@ -14,10 +14,12 @@ export default async function Home() {
         <SyncedSlideDeck
           slides={deck.slides}
           deckTitle={deck.deckTitle}
+          deckSubtitle={deck.deckSubtitle}
           syncRole="viewer"
           initialSlideIndex={presenterState.slideIndex}
           initialRevealStep={presenterState.revealStep}
           noScroll
+          viewMode="audience"
         />
       </div>
     </div>
