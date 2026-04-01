@@ -6,9 +6,10 @@ import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import type { DeckSlide } from "../lib/deck-data";
 
 type SlideDeckProps = {
-  slides: string[];
+  slides: DeckSlide[];
   deckTitle: string;
   deckSubtitle?: string;
   syncRole?: "viewer" | "admin";
@@ -97,15 +98,15 @@ const ARTICLE_CLASS_NO_SCROLL = [
 ].join(" ");
 
 const AUDIENCE_ARTICLE_CLASS = [
-  "relative w-full overflow-hidden rounded-[2rem] bg-audience-surface text-audience-ink",
-  "px-[clamp(1.5rem,4vw,4.5rem)] py-[clamp(1.5rem,4vw,4rem)]",
-  "shadow-[0_40px_120px_rgba(25,28,30,0.14)]",
-  "min-h-[38rem] lg:min-h-[44rem]",
+  "relative w-full overflow-hidden rounded-[1.15rem] bg-audience-surface text-audience-ink sm:rounded-[1.5rem] lg:rounded-[2rem]",
+  "px-4 py-4 sm:px-6 sm:py-6 lg:px-[clamp(1.5rem,4vw,4.5rem)] lg:py-[clamp(1.5rem,4vw,4rem)]",
+  "shadow-[0_18px_52px_rgba(25,28,30,0.12)] sm:shadow-[0_28px_90px_rgba(25,28,30,0.14)] lg:shadow-[0_40px_120px_rgba(25,28,30,0.14)]",
+  "min-h-[22rem] sm:min-h-[28rem] lg:min-h-[38rem] xl:min-h-[44rem]",
 ].join(" ");
 
 const AUDIENCE_CONTENT_CLASS = [
-  "w-[72rem] max-w-none",
-  "sm:w-[76rem] lg:w-[82rem]",
+  "w-[21rem] max-w-none",
+  "sm:w-[31rem] md:w-[42rem] lg:w-[56rem] xl:w-[68rem] 2xl:w-[82rem]",
 ].join(" ");
 
 const AUDIENCE_MARKDOWN_CLASS = [
@@ -113,19 +114,19 @@ const AUDIENCE_MARKDOWN_CLASS = [
   "[&_h1]:mt-0 [&_h1]:mb-6 [&_h1]:font-headline [&_h1]:text-[clamp(2.2rem,4.9vw,4.35rem)] [&_h1]:font-extrabold [&_h1]:leading-[1.05] [&_h1]:tracking-[-0.04em] [&_h1]:text-audience-ink",
   "[&_h2]:mt-8 [&_h2]:mb-4 [&_h2]:font-headline [&_h2]:text-[clamp(1.45rem,2.7vw,2.15rem)] [&_h2]:font-bold [&_h2]:leading-[1.08] [&_h2]:tracking-[-0.03em] [&_h2]:text-audience-ink",
   "[&_h3]:mt-6 [&_h3]:mb-3 [&_h3]:font-headline [&_h3]:text-[clamp(1.02rem,1.75vw,1.35rem)] [&_h3]:font-bold [&_h3]:leading-tight [&_h3]:text-audience-ink",
-  "[&_p]:max-w-[58rem] [&_p]:text-[clamp(1rem,1.34vw,1.28rem)] [&_p]:leading-[1.68] [&_p]:text-audience-muted",
-  "[&_blockquote]:max-w-[58rem] [&_blockquote]:text-[clamp(1rem,1.28vw,1.22rem)] [&_blockquote]:leading-[1.68]",
-  "[&_ul]:my-5 [&_ol]:my-5 [&_ul]:max-w-[58rem] [&_ol]:max-w-[58rem] [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-7 [&_ol]:pl-7",
+  "[&_p]:max-w-[18rem] [&_p]:text-[clamp(0.95rem,1.15vw,1.18rem)] [&_p]:leading-[1.64] [&_p]:text-audience-muted sm:[&_p]:max-w-[28rem] md:[&_p]:max-w-[38rem] lg:[&_p]:max-w-[58rem]",
+  "[&_blockquote]:max-w-[18rem] [&_blockquote]:text-[clamp(0.95rem,1.08vw,1.12rem)] [&_blockquote]:leading-[1.64] sm:[&_blockquote]:max-w-[28rem] md:[&_blockquote]:max-w-[38rem] lg:[&_blockquote]:max-w-[58rem]",
+  "[&_ul]:my-4 [&_ol]:my-4 [&_ul]:max-w-[18rem] [&_ol]:max-w-[18rem] [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 sm:[&_ul]:my-5 sm:[&_ol]:my-5 sm:[&_ul]:max-w-[28rem] sm:[&_ol]:max-w-[28rem] sm:[&_ul]:pl-6 sm:[&_ol]:pl-6 md:[&_ul]:max-w-[38rem] md:[&_ol]:max-w-[38rem] lg:[&_ul]:max-w-[58rem] lg:[&_ol]:max-w-[58rem] lg:[&_ul]:pl-7 lg:[&_ol]:pl-7",
   "[&_li]:text-[clamp(0.98rem,1.22vw,1.16rem)] [&_li]:leading-[1.62] [&_li]:text-audience-ink",
   "[&_li+li]:mt-2",
   "[&_a]:text-audience-primary [&_a]:underline-offset-[0.2rem]",
   "[&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-audience-outline [&_blockquote]:pl-5 [&_blockquote]:text-audience-muted",
-  "[&_pre]:overflow-x-auto [&_pre]:rounded-[1.25rem] [&_pre]:bg-code-bg [&_pre]:px-6 [&_pre]:py-5 [&_pre]:text-code-fg [&_pre]:shadow-[0_24px_60px_rgba(25,28,30,0.24)]",
+  "[&_pre]:overflow-x-auto [&_pre]:rounded-[1rem] [&_pre]:bg-code-bg [&_pre]:px-3 [&_pre]:py-3 [&_pre]:text-[0.78rem] [&_pre]:text-code-fg [&_pre]:shadow-[0_16px_34px_rgba(25,28,30,0.2)] sm:[&_pre]:rounded-[1.25rem] sm:[&_pre]:px-5 sm:[&_pre]:py-4 sm:[&_pre]:text-[0.88rem] lg:[&_pre]:px-6 lg:[&_pre]:py-5",
   "[&_code]:font-mono",
-  "[&_table]:w-full [&_table]:border-collapse [&_table]:rounded-xl [&_table]:overflow-hidden",
+  "[&_table]:w-full [&_table]:border-collapse [&_table]:rounded-xl [&_table]:overflow-hidden [&_table]:text-[0.75rem] sm:[&_table]:text-[0.88rem] lg:[&_table]:text-[1rem]",
   "[&_th]:border [&_td]:border [&_th]:border-audience-outline [&_td]:border-audience-outline",
-  "[&_th]:bg-audience-surface-low [&_th]:px-3 [&_td]:px-3 [&_th]:py-2.5 [&_td]:py-2.5 [&_th]:text-left [&_td]:text-left",
-  "[&_img]:block [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-[1.5rem] [&_img]:shadow-[0_24px_64px_rgba(25,28,30,0.16)]",
+  "[&_th]:bg-audience-surface-low [&_th]:px-2 [&_td]:px-2 [&_th]:py-2 [&_td]:py-2 [&_th]:text-left [&_td]:text-left sm:[&_th]:px-3 sm:[&_td]:px-3 sm:[&_th]:py-2.5 sm:[&_td]:py-2.5",
+  "[&_img]:block [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-[1rem] [&_img]:shadow-[0_18px_40px_rgba(25,28,30,0.14)] sm:[&_img]:rounded-[1.25rem] sm:[&_img]:shadow-[0_24px_64px_rgba(25,28,30,0.16)]",
 ].join(" ");
 
 function renderSlideSections(
@@ -525,7 +526,7 @@ export default function SlideDeck({
   const isFollower = syncRole === "viewer";
   const initialIndex = clampIndex(externalSlideIndex ?? 0, total);
   const initialRevealStep = resolveRevealStepForSlide(
-    slides[initialIndex] ?? "",
+    slides[initialIndex]?.content ?? "",
     externalRevealStep,
   );
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
@@ -654,7 +655,7 @@ export default function SlideDeck({
 
       const clamped = clampIndex(index, total);
       const previousIndex = currentIndexRef.current;
-      const slideMarkdown = slides[clamped] ?? "";
+      const slideMarkdown = slides[clamped]?.content ?? "";
       const nextRevealStep = resolveRevealStepForSlide(
         slideMarkdown,
         options.revealStep,
@@ -733,7 +734,7 @@ export default function SlideDeck({
 
     const clampedExternalSlideIndex = clampIndex(externalSlideIndex, total);
     const normalizedExternalRevealStep = resolveRevealStepForSlide(
-      slides[clampedExternalSlideIndex] ?? "",
+      slides[clampedExternalSlideIndex]?.content ?? "",
       externalRevealStep,
     );
     if (
@@ -774,7 +775,7 @@ export default function SlideDeck({
       return "# No slides available";
     }
 
-    return slides[currentIndex];
+    return slides[currentIndex]?.content ?? "# No slide content";
   }, [currentIndex, slides, total]);
 
   const chunks = useMemo(() => parseSlideChunks(slide), [slide]);
@@ -1009,15 +1010,27 @@ export default function SlideDeck({
     ]
       .filter(Boolean)
       .join(" ");
+    const audienceRootClassName = embedded
+      ? "relative h-full w-full overflow-hidden rounded-[1.35rem] bg-audience-background text-audience-ink selection:bg-audience-primary-soft selection:text-audience-primary"
+      : "relative h-full w-full overflow-hidden bg-audience-background text-audience-ink selection:bg-audience-primary-soft selection:text-audience-primary";
+    const audienceContentContainerClassName = embedded
+      ? "relative z-10 flex h-full w-full items-center justify-center px-3 py-3 sm:px-5 sm:py-5 lg:px-8"
+      : "relative z-10 flex h-full w-full items-center justify-center px-3 py-3 sm:px-6 sm:py-6 lg:px-14";
+    const audienceFooterClassName = embedded
+      ? "pointer-events-none absolute bottom-3 left-4 z-20 flex max-w-[calc(100%-2rem)] flex-col gap-0.5 sm:bottom-6 sm:left-7 sm:gap-1"
+      : "pointer-events-none fixed bottom-3 left-4 z-20 flex max-w-[calc(100vw-2rem)] flex-col gap-0.5 sm:bottom-7 sm:left-8 sm:max-w-none sm:gap-1";
+    const audienceProgressClassName = embedded
+      ? "absolute bottom-0 left-0 right-0 z-20 h-1 bg-audience-surface-low"
+      : "fixed bottom-0 left-0 right-0 z-20 h-1 bg-audience-surface-low";
 
     return (
-      <main className="relative h-full w-full overflow-hidden bg-audience-background text-audience-ink selection:bg-audience-primary-soft selection:text-audience-primary">
+      <main className={audienceRootClassName}>
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute right-[-8%] top-[-12%] h-[42vw] w-[42vw] rounded-full bg-audience-primary opacity-[0.05] blur-[120px]" />
           <div className="absolute bottom-[-12%] left-[-8%] h-[34vw] w-[34vw] rounded-full bg-audience-secondary opacity-[0.06] blur-[110px]" />
         </div>
 
-        <div className="relative z-10 flex h-full w-full items-center justify-center px-5 py-5 sm:px-8 sm:py-8 lg:px-14">
+        <div className={audienceContentContainerClassName}>
           <div
             ref={viewportRef}
             className="grid h-full w-full min-h-0 min-w-0 place-items-center overflow-hidden"
@@ -1041,7 +1054,7 @@ export default function SlideDeck({
                 role="region"
                 aria-label={`Slide ${visibleSlideNumber} of ${total}`}
               >
-                <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-audience-secondary-soft px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-audience-secondary">
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-audience-secondary-soft px-2.5 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-audience-secondary sm:mb-8 sm:px-3 sm:py-1.5 sm:text-[0.7rem] sm:tracking-[0.22em]">
                   Slide {visibleSlideNumber} of {total}
                 </div>
                 <div className={AUDIENCE_MARKDOWN_CLASS}>
@@ -1052,14 +1065,16 @@ export default function SlideDeck({
           </div>
         </div>
 
-        <div className="pointer-events-none fixed bottom-7 left-6 z-20 flex flex-col gap-1 sm:left-8">
-          <span className="font-headline text-sm font-extrabold tracking-tight text-audience-ink">
+        <div className={audienceFooterClassName}>
+          <span className="font-headline text-[0.72rem] font-extrabold tracking-tight text-audience-ink sm:text-sm">
             {deckTitle}
           </span>
-          <span className="text-xs text-audience-secondary">{footerMeta}</span>
+          <span className="text-[0.65rem] text-audience-secondary sm:text-xs">
+            {footerMeta}
+          </span>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 z-20 h-1 bg-audience-surface-low">
+        <div className={audienceProgressClassName}>
           <div
             className="h-full bg-audience-primary transition-all duration-500 ease-out"
             style={{ width: `${progressPercent}%` }}

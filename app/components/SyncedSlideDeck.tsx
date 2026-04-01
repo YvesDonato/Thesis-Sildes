@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import type { DeckSlide } from "../lib/deck-data";
 import SlideDeck from "./SlideDeck";
 
 type SyncedSlideDeckProps = {
-  slides: string[];
+  slides: DeckSlide[];
   deckTitle: string;
   deckSubtitle?: string;
   syncRole: "viewer" | "admin";

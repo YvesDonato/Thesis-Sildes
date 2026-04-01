@@ -1,479 +1,374 @@
 ---
 title: "Effects of Zero-Shot Chain-of-Thought Prompting on Medium Language Models Versus Distilled Reasoning Models"
-sub_title: Thesis Proposal Defence 
-author: Yves Donato
+sub_title: "Thesis Defence"
+author: "Yves Donato"
 ---
+
 Overview
 ===
-This presentation would cover as follows:
 <!-- incremental_lists: true -->
 <!-- list_item_newlines: 2 -->
-1. **Motivation & Rationale**
-2. **Introduction**
-3. **Background**
-4. **Thesis Statement**
-5. **Methodology**
-6. **Next Steps**
-<!-- pause -->
-All the slides content are taken from the thesis.
-<!-- incremental_lists: false -->
+This presentation covers:
+
+1. **Research problem and motivation**
+2. **Comparison framework**
+3. **Methodology and metrics**
+4. **Main findings**
+5. **Interpretation**
+6. **Limitations and future work**
+
 <!-- end_slide -->
 
-Motivation & Rationale - Passion & DeepSeek
-===
-Even before creating the proposal:
-<!-- incremental_lists: true -->
-<!-- list_item_newlines: 2 --> 
-- I've been passionate:
-  - When **ChatGPT** and **GPT-3.5** come out, I was there testing it.
-  - I saw the writing on the wall, when testing those models.
-  - LLMs are the **future**.
-  - It could greatly simplify tasks that would take hours to do. 
-- Testing models was not the end.
-- I've created AI side projects.
-
-Knowing all that I decided:
-- Focus on something LLM related.
-- Knew that LLM research was difficult.
-- But...
-  - I was aware of DeepSeek.
-  - Some aspects of research were not explained.
-  - Multiple research questions were created.
-- I ended up with:
-  - **Comparative Analysis of Chain-of-Thought Prompting Versus Reasoning Large Language Models.**
-  - The thesis attempts to fill in holes left by rapid expansion of the field.
-<!-- end_slide -->
-
-Introduction
+Research Problem
 ===
 <!-- incremental_lists: true -->
 <!-- list_item_newlines: 2 -->
-<!-- alignment: left -->
-The thesis does not focus on the architecture of LLMs but instead focuses on:
-  - Reasoning.
-  - Training:
-    - The fine-tuning phase.
-      - Reinforcement Learning with Human Feedback (RLHF).
-      - Distillation.
-  - Prompting:
-    - Chain of Thought (CoT) Prompting.
+Large language models increasingly claim **reasoning** ability, but there are still limited controlled comparisons between:
+
+- **Prompt-only reasoning**
+  - Zero-Shot Chain-of-Thought (ZS-CoT)
+- **Training-time reasoning mechanisms**
+  - RLHF-based reasoning behavior
+  - Distillation from a reasoning teacher
+
+<!-- pause -->
+The central problem is:
+
+**Does a simple reasoning prompt meaningfully close the gap with models explicitly optimized for reasoning?**
 
 <!-- end_slide -->
 
-Introduction - Reasoning
+Research Questions
 ===
 <!-- incremental_lists: true -->
-<!-- list_item_newlines: 2 --> 
-What are reasoning models?
-- A new type of LLM that rose to prominence this year.
-- Two main ways that will be covered:
-  - Chain-of-thought prompting:
-    - Increases inference time.
-    - Inference time is used to decompose the problem into small parts.
-    - The model is given more time to second guess itself.
-  - Fine-tuning techniques:
-    - RLHF with CoT.
-      - Uses CoT Prompting.
-      - Automatic version of CoT Prompting.
-    - Distillation
-      - Takes teacher output tokens.
-      - Trains on them.
-      - Effectively learns reasoning through the teacher model.
+<!-- list_item_newlines: 2 -->
+This thesis asks:
+
+1. **How does ZS-CoT prompting compare to internal reasoning mechanisms such as RLHF with Chain-of-Thought examples and distillation of a reasoning model?**
+2. **Is the number of tokens a model spends on reasoning correlated with performance?**
+
+<!-- pause -->
+The goal is not just to compare accuracy, but to compare **accuracy under cost**.
+
 <!-- end_slide -->
 
-Background - CoT Prompting
+Why This Comparison Is Fair
 ===
 <!-- incremental_lists: true -->
-<!-- list_item_newlines: 2 --> 
-- Two types of CoT:
-  - Multi-Shot CoT or just CoT
-    - Does use examples within the prompt.
+<!-- list_item_newlines: 2 -->
+To compare reasoning methods fairly, each tested family should have:
+
+- A **reasoning model**
+- A **clearly specified base model**
+- The **same architecture**
+- The **same parameter size**
+
 <!-- pause -->
-```markdown
-Q: Roger has 5 tennis balls. He buys 2 more cans of tennis
-balls. Each can has 3 tennis balls. How many tennis balls does
-he have now?
-A: The answer is 11
+The DeepSeek-R1 family is useful because it provides explicit base-model matches, allowing direct comparison between:
 
-Q: ...
-A: ...
-```
-<!-- alignment: center -->
-Figure 1: Example of CoT as per [3]
-
-<!-- alignment: left -->
-  - Zero-Shot CoT
-    - Does not use examples within the prompt.
-<!-- pause -->
-```markdown
-Q: On average Joe throws 25
-punches per minute. A fight
-lasts 5 rounds of 3 minutes. How
-many punches did he throw?
-
-A: Let’s think step by step.
-```
-<!-- alignment: center -->
-Figure 2: Example of CoT as per [1]
-
-
-<!-- alignment: left -->
-- Many Activation phrases were tested:
-  - "Let's think step by step"
-    - The highest increase of accuracy
-- How does CoT prompting compare to baseline? 
-<!-- pause -->
-```latex +render
-\begin{table}[h]
-    \par
-    \bigskip
-    \centering
-    \begin{tabular}{  m{8cm}  m{2cm}  m{2cm} } 
-        \hline
-         & \centerline{MultiArith} & \centerline{GSM8K} \\ 
-        \hline
-        text-davinci-002: Zero-Shot & \centerline{17.7} & \centerline{10.4} \\ 
-        \textbf{text-davinci-002: Zero-Shot-CoT} & \centerline{\textbf{78.7}} & \centerline{\textbf{40.7}} \\ 
-        \hline
-        PaLM 540B: Zero-Shot & \centerline{25.5} & \centerline{12.5} \\ 
-        \textbf{PaLM 540B: Zero-Shot-CoT} & \centerline{\textbf{66.1}} & \centerline{\textbf{43.0}} \\ 
-        \hline
-    \end{tabular}
-\end{table}
-```
-<!-- alignment: center -->
-Figure 3: Results of CoT Prompting as per [1]
+- **Base model**
+- **Base model + ZS-CoT**
+- **DeepSeek-R1 distilled reasoning model**
 
 <!-- end_slide -->
-Background - RLHF
+
+Background - What Is Being Compared?
 ===
 <!-- incremental_lists: true -->
-<!-- list_item_newlines: 2 --> 
-What is Reinforcement Learning with Human Feedback in the context of LLMs?
-- Used in the alignment step (Fine-Tuning).
-- Uses human-provided responses to questions.
-- In context of reasoning models:
-  - Uses CoT Prompting examples (Or any other reasoning prompting method).
-  - Makes models closer aligned to what was given in the examples.
-<!-- pause -->
-```mermaid +render +width:100%
-flowchart LR
-    Examples --> RLHFAlgo[RLHF Algorithm] --> LLM --> CloserAlignedLLM[Closer Aligned LLM]
-```
-<!-- alignment: center -->
-Figure 4: Example of a RLHF pipeline as per [4]
-<!-- alignment: left -->
+<!-- list_item_newlines: 2 -->
+Three comparison conditions are central to this thesis:
 
-- How does RLHF-CoT compare to baseline? 
+- **Baseline prompting**
+  - direct answering without ZS-CoT
+- **ZS-CoT prompting**
+  - adds an instruction such as *"Let's think step by step"*
+- **Distilled reasoning models**
+  - trained to inherit reasoning behavior from a stronger teacher
+
 <!-- pause -->
-```latex +render
-\begin{table}[h]
-    \par
-    \bigskip
-    \centering
-    \begin{tabular}{  m{5cm}  m{2.5cm}  m{2.5cm} } 
-        \hline
-        Benchmark & \centerline{DeepSeek-V3} & \centerline{\textbf{DeepSeek-R1}} \\ 
-        \hline
-        SWE Verified & \centerline{42.0} & \centerline{\textbf{49.2}} \\ 
-        LiveCodeBench & \centerline{36.2} & \centerline{\textbf{65.9}} \\
-        Aider-Polyglot & \centerline{49.6} & \centerline{\textbf{53.3}} \\
-        \hline
-        AIME 2024 & \centerline{39.2} & \centerline{\textbf{79.8}} \\ 
-        MATH-500 & \centerline{90.2} & \centerline{\textbf{97.3}} \\ 
-        CNMO 2024 & \centerline{43.2} & \centerline{\textbf{78.8}} \\ 
-        \hline
-    \end{tabular}
-\end{table}
-```
-<!-- alignment: center -->
-Figure 5: Results of RLHF-CoT as per [2]
+This creates a direct comparison between **prompt-time reasoning** and **training-time reasoning optimization**.
 
 <!-- end_slide -->
-Thesis Statement
-===
-Taken directly from the Thesis:
-<!-- pause -->
-```markdown
-This paper examines the differences between Zero-Shot-Chain-of-Thought Prompting
-and Reinforcement Learning with Human Feedback in both performance and time
-taken to answer a correct question.
-```
-<!-- alignment: center -->
-Figure 6: Excerpt from the Thesis
 
+Evaluation Metrics
+===
 <!-- alignment: left -->
-What does this mean?
+Accuracy is measured as:
+
+$$
+\text{Accuracy}(\%) = 100 \cdot \frac{N_{\text{correct}}}{N}
+$$
+
+<!-- pause -->
+Efficiency is measured as:
+
+$$
+T_{avg} = \frac{\sum_{i=1}^{N} T_i}{N}
+$$
+
+$$
+\text{Efficiency} = \frac{\text{Accuracy}^2}{T_{avg}}
+$$
+
+<!-- pause -->
+Why this matters:
+
+- Accuracy alone can hide inference cost.
+- Token usage acts as a practical proxy for reasoning cost.
+
+<!-- end_slide -->
+
+Why AIME 2025?
+===
 <!-- incremental_lists: true -->
-<!-- list_item_newlines: 2 --> 
-- Find where ZS-CoT lies compared to RLHF Reasoning models
-- Use accuracy and efficiency as a point of comparison.
-  - **Accuracy**: How well does the model do in benchmarks?
-  - **Efficiency**: How fast it does it. 
-- Math and Coding benchmarks are great choices for evaluating reasoning models.
-- Use pre-existing benchmarks such as SWE-Bench and AIME 2025.
-- We must ensure each test model family has:
-  - Has a reasoning model.
-  - Has an original model before reasoning techniques.
-  - Under those standards the DeepSeek-R1 family passes.
+<!-- list_item_newlines: 2 -->
+AIME 2025 was selected because it is:
+
+- A **reasoning-heavy math benchmark**
+- Short enough to support repeated local experiments
+- New enough to reduce contamination concerns for the tested models
+- Easy to score because answers are integers from **0 to 999**
+
+<!-- pause -->
+The dataset contains **30 test cases**, which made it practical to:
+
+- test multiple models
+- rerun experiments
+- manually inspect outputs when needed
+
 <!-- end_slide -->
 
 Methodology
 ===
 <!-- incremental_lists: true -->
-<!-- list_item_newlines: 2 --> 
-The process of benchmarking would be as follows (AIME 2025):
-1. Pull Benchmark from Hugging Face.
-2. Download model to the LLM pipeline (Ollama).
-3. Run model on the pipeline.
-4. Create an LLM script to input every question into the model.
-5. For every response use another LLM to extract the answer from the initial response.
-6. We then structure a json file, where every line of json is a question object.
-7. We do this for every question and then compare with the original.
-<!-- new_lines: 4 -->
+<!-- list_item_newlines: 2 -->
+The benchmark pipeline is:
+
+1. Load AIME 2025 questions.
+2. Run each model locally under controlled settings.
+3. Record the raw response for every question.
+4. Use a second model to extract the final numeric answer.
+5. Store each result as structured JSONL.
+6. Compare extracted answers against ground truth.
+7. Compute accuracy, tokens, and efficiency.
+
+<!-- pause -->
+Controlled variables include:
+
+- **context length**
+- **quantization**
+- **temperature**
+
+<!-- end_slide -->
+
+Tested Model Pairs
+===
+```latex +render
+\begin{table}[h]
+    \par
+    \bigskip
+    \centering
+    \begin{tabular}{ m{6cm} m{6cm} }
+        \hline
+        Distilled Model & Base Model \\
+        \hline
+        DeepSeek-R1-Distill-Llama-8B & Llama-3.1-8B \\
+        DeepSeek-R1-Distill-Qwen-14B & Qwen2.5-14B \\
+        DeepSeek-R1-Distill-Qwen-32B & Qwen2.5-32B \\
+        DeepSeek-R1-Distill-Llama-70B & Llama-3.3-70B-Instruct \\
+        \hline
+    \end{tabular}
+\end{table}
+```
 <!-- alignment: center -->
-<!-- pause -->
-```markdown
-{"question_num": 0, "model_name": "DeepSeek-R1-Distill-Llama-8B", "answer": "70", "time": 24.789}
-```
-Figure 7: Example of jsonl
+Figure 1: Matched model families used for direct comparison
 
 <!-- end_slide -->
 
-
-Methodology - Basic Pipeline
-===
-What does this pipeline look like?
-<!-- pause -->
-
-<!-- column_layout: [1, 1] -->
-<!-- column: 0 -->
-
-**DeepSeek-R1:8b**
-<!-- pause -->
-```python {1|2|3|5-14|12|16|1-16} +line_numbers +exec
-/// from ollama import Client
-/// import polars as pl
-client = Client(host='http://ollama:11434', headers={'x-some-header': 'some-value'})
-GEN_MODEL = 'hf.co/unsloth/DeepSeek-R1-Distill-Llama-8B-GGUF:Q8_0'
-BASE_SYSTEM = "Give me one a single answer in numeric form do not add comments."
-
-def chat_once(prompt_text: str):
-    messages = [{'role': 'system', 'content': BASE_SYSTEM}] if BASE_SYSTEM else []
-    messages.append({'role': 'user', 'content': prompt_text})
-    return client.chat(
-        model=GEN_MODEL,
-        messages=messages,
-        stream=True,
-        options={'num_ctx': 8000, 'temperature': 0.6, 'top_p': 0.95},
-        keep_alive=-1
-    )
-
-prompt = "What is 1 + 1" # Proxy for benchmark
-/// stream = chat_once(prompt)
-/// for chunk in stream:
-///    msg = chunk.get('message', {})
-///    if 'content' in msg:
-///        token = msg['content']
-///        print(token, end='', flush=True)   
-```
-<!-- column: 1 -->
-<!-- pause -->
-
-**Llama3.1:8b**
-<!-- pause -->
-```python {2|1-16} +line_numbers +exec
-/// from ollama import Client
-/// import polars as pl
-client = Client(host='http://ollama:11434', headers={'x-some-header': 'some-value'})
-GEN_MODEL = 'llama3.1:8b-instruct-q8_0'
-BASE_SYSTEM = "Give me one single answer in numeric form, do not add comments."
-
-def chat_once(prompt_text: str):
-    messages = [{'role': 'system', 'content': BASE_SYSTEM}] if BASE_SYSTEM else []
-    messages.append({'role': 'user', 'content': prompt_text})
-    return client.chat(
-        model=GEN_MODEL,
-        messages=messages,
-        stream=True,
-        options={'num_ctx': 8000, 'temperature': 0.6, 'top_p': 0.95},
-        keep_alive=-1
-    )
-
-prompt = "What is 1 + 1" # Proxy for benchmark
-/// stream = chat_once(prompt)
-/// for chunk in stream:
-///    msg = chunk.get('message', {})
-///    if 'content' in msg:
-///        token = msg['content']
-///        print(token, end='', flush=True)   
-```
-
-<!-- end_slide -->
-
-Methodology - Revised Pipeline
-===
-<!-- column_layout: [1, 1] -->
-<!-- column: 0 -->
-<!-- pause -->
-```mermaid +render +width:75%
-flowchart TD
-    Input[Benchmark Questions] --> LLM[LLM Answer Generator] --> LLM2[LLM Extractor] --> Output
-```
-
-<!-- column: 1 -->
-<!-- pause -->
-**DeepSeek-R1:8b** with **Llama3.1:8b**
-
-
-<!-- pause -->
-```python {1-24|18|20|22|1-24} +line_numbers +exec
-/// from ollama import Client
-/// import polars as pl
-/// import json, re, time
-/// client = Client(host='http://ollama:11434', headers={'x-some-header': 'some-value'})
-GEN_MODEL = 'hf.co/unsloth/DeepSeek-R1-Distill-Llama-8B-GGUF:Q8_0'
-EXTRACT_MODEL = 'llama3.1:8b-instruct-q8_0'
-BASE_SYSTEM = "Give me one a single answer in numeric form do not add comments."
-
-
-def chat_once(prompt_text: str):
-    messages = [{'role': 'system', 'content': BASE_SYSTEM}] if BASE_SYSTEM else []
-    messages.append({'role': 'user', 'content': prompt_text})
-    return client.chat(
-        model=GEN_MODEL,
-        messages=messages,
-        stream=True,
-        options={'num_ctx': 8000, 'temperature': 0.6, 'top_p': 0.95},
-        keep_alive=-1
-    )
-
-/// THINK_RE = re.compile(r'(?is)<think>\s*.*?\s*</think>')
-    
-def strip_think(s: str) -> str:
-///    return THINK_RE.sub('', s).strip()
-/// BOXED_RE = re.compile(r'\\boxed\s*\{\s*([\-+]?\d+)\s*\}')
-/// INLINE_DOLLAR_INT_RE = re.compile(r'\$?\s*([\-+]?\d+)\s*\$?')
-/// INT_RE = re.compile(r'([\-+]?\d+)')
-
-def extract_answer(model_output: str) -> str: # Secondary Model Extractor
-///    cleaned = strip_think(model_output)
-///    candidate = cleaned
-///    if candidate and candidate.lstrip('+-').isdigit():
-///        return candidate.strip()
-///    system = (
-///        "Extract ONLY the final numeric answer from the text. "
-///        "Return just the number (no words, no punctuation, no units)."
-///    )
-///    messages = [{'role': 'system', 'content': system},
-///                {'role': 'user', 'content': cleaned}]
-///    stream = client.chat(
-///        model=EXTRACT_MODEL, messages=messages, stream=True,
-///        options={'num_ctx': 8000, 'temperature': 0.6, 'top_p': 0.95}, keep_alive=-1
-///    )
-///    reply = []
-///    for chunk in stream:
-///        msg = chunk.get('message', {})
-///        if 'content' in msg:
-///            reply.append(msg['content'])
-///    out = ''.join(reply).strip()
-///    return out.strip()
-    
-prompt = "What is 1 + 1"
-
-/// stream = chat_once(prompt)
-/// full_reply_parts = []
-/// for chunk in stream:
-///    msg = chunk.get('message', {})
-///    if 'content' in msg:
-///       token = msg['content']
-///       full_reply_parts.append(token)
-/// full_reply = ''.join(full_reply_parts)
-answer = extract_answer(full_reply)
-/// print(answer)
-```
-<!-- end_slide -->
-
-Preliminary Findings - Accuaracy
+Main Results - Direct Comparisons
 ===
 <!-- alignment: center -->
-Results of AIME 2025: DeepSeek-R1:8B vs Llama3.1:8b 
+Distilled DeepSeek-R1 models consistently outperform their matched base and ZS-CoT conditions in accuracy.
+
 <!-- pause -->
 ```latex +render
 \begin{table}[h]
     \par
     \bigskip
     \centering
-    \begin{tabular}{  m{6.5cm}  m{2cm}  } 
+    \begin{tabular}{ m{5.8cm} m{2.5cm} m{2.5cm} }
         \hline
-        Model & \centerline{AIME 2025} \\ 
+        Model & \centerline{Accuracy} & \centerline{Efficiency} \\
         \hline
-        Llama3.1:8B-CoT & \centerline{0} \\ 
-        \textbf{DeepSeek-R1:8B} & \centerline{\textbf{33.3}} \\  
+        Llama3.1:8B-Baseline@Q8 & \centerline{3%} & \centerline{0.0025} \\
+        Llama3.1:8B-CoT@Q8 & \centerline{0%} & \centerline{0.0000} \\
+        \textbf{DeepSeek-R1:8B@Q8} & \centerline{\textbf{43%}} & \centerline{\textbf{0.1345}} \\
+        \hline
+        Qwen2.5:14B-Baseline@Q8 & \centerline{10%} & \centerline{0.1122} \\
+        Qwen2.5:14B-CoT@Q8 & \centerline{10%} & \centerline{0.1104} \\
+        \textbf{DeepSeek-R1:14B@Q8} & \centerline{\textbf{43.3%}} & \centerline{\textbf{0.1480}} \\
+        \hline
+        Qwen2.5:32B-Baseline@Q8 & \centerline{13%} & \centerline{0.2089} \\
+        Qwen2.5:32B-CoT@Q8 & \centerline{13%} & \centerline{0.2079} \\
+        \textbf{DeepSeek-R1:32B@Q8} & \centerline{\textbf{50%}} & \centerline{0.1907} \\
+        \hline
+        Llama3.3:70B-Baseline@Q4@16k & \centerline{7%} & \centerline{0.0502} \\
+        Llama3.3:70B-CoT@Q4@16k & \centerline{7%} & \centerline{0.0517} \\
+        \textbf{DeepSeek-R1:70B@Q4@16k} & \centerline{\textbf{50%}} & \centerline{\textbf{0.2033}} \\
         \hline
     \end{tabular}
 \end{table}
 ```
-<!-- alignment: center -->
-Figure 8: Results of AIME 2025 (Accuracy)
-
-<!-- incremental_lists: true -->
-<!-- list_item_newlines: 2 -->
-<!-- alignment: left -->
-What are the reasons why CoT Prompting does so poorly? (speculation)
-- Well..
-  - The paper actually supports this:
-
-<!-- pause -->
-![image:width:25%](/examples/thesis/image(1).png)
-<!-- alignment: center -->
-Figure 9: Results of ZS and ZS-CoT as per [1]
-<!-- alignment: left -->
-
-- The benchmark is too hard for the models.
-- Model options were not optimal.
-- Lower parameter models do not adhere to CoT Prompting.
-<!-- end_slide -->
-
-Preliminary Findings - Efficiency 
-===
-<!-- pause -->
-![image:width:50%](/examples/thesis/comparison.png)
-<!-- alignment: center -->
-Figure 8: Results of AIME 2025 (Efficiency)
-<!-- alignment: left -->
-<!-- incremental_lists: true -->
-<!-- list_item_newlines: 2 -->
-What is going on here? (speculation)
-- In this graph we can see that DeepSeek-R1:8B takes significantly more time.
-- Perhaps if we increase the number of models tested we see a correlation between thinking time and model performance.
 
 <!-- end_slide -->
-Next Steps
+
+Main Results - Token Usage
+===
+```latex +render
+\begin{table}[h]
+    \par
+    \bigskip
+    \centering
+    \begin{tabular}{ m{6cm} m{3cm} }
+        \hline
+        Model & \centerline{Mean Tokens} \\
+        \hline
+        Llama3.1:8B-Baseline@Q8 & \centerline{4401} \\
+        Llama3.1:8B-CoT@Q8 & \centerline{903} \\
+        DeepSeek-R1:8B@Q8 & \centerline{13960} \\
+        Qwen2.5:14B-Baseline@Q8 & \centerline{892} \\
+        Qwen2.5:14B-CoT@Q8 & \centerline{906} \\
+        DeepSeek-R1:14B@Q8 & \centerline{12688} \\
+        Qwen2.5:32B-Baseline@Q8 & \centerline{851} \\
+        Qwen2.5:32B-CoT@Q8 & \centerline{855} \\
+        DeepSeek-R1:32B@Q8 & \centerline{13107} \\
+        Llama3.3:70B-Baseline@Q4@16k & \centerline{886} \\
+        Llama3.3:70B-CoT@Q4@16k & \centerline{859} \\
+        DeepSeek-R1:70B@Q4@16k & \centerline{12299} \\
+        \hline
+    \end{tabular}
+\end{table}
+```
+
+<!-- pause -->
+<!-- incremental_lists: true -->
+<!-- list_item_newlines: 2 -->
+Key takeaway:
+
+- Distilled reasoning models are usually **more accurate**
+- But they often use **substantially more tokens**
+- ZS-CoT does **not** reliably improve the accuracy-cost trade-off for the smaller base models studied
+
+<!-- end_slide -->
+
+10-Run Repeated Evaluation
 ===
 <!-- incremental_lists: true -->
-<!-- list_item_newlines: 2 --> 
-The immediate next steps are:
-- Expand as much as possible:
-  - Benchmark more models.
-  - Test different model sizes across viable model families.
-  - Add more benchmarks in the test suite.
+<!-- list_item_newlines: 2 -->
+To measure run-to-run variability under stochastic decoding, a **10-run paired study** was conducted on **Qwen2.5-14B**.
+
+<!-- pause -->
+```latex +render
+\begin{table}[h]
+    \par
+    \bigskip
+    \centering
+    \begin{tabular}{ m{5.8cm} m{2cm} m{1.6cm} m{1.8cm} m{1.8cm} }
+        \hline
+        Model & \centerline{Mean Acc.} & \centerline{SD} & \centerline{CI low} & \centerline{CI high} \\
+        \hline
+        Qwen2.5-14B-baseline@0.6 & \centerline{9.67%} & \centerline{2.92} & \centerline{7.58} & \centerline{11.75} \\
+        Qwen2.5-14B-CoT@0.6 & \centerline{8.00%} & \centerline{3.91} & \centerline{5.20} & \centerline{10.80} \\
+        \hline
+    \end{tabular}
+\end{table}
+```
+
+<!-- pause -->
+The repeated-run result stays qualitatively consistent:
+
+- ZS-CoT did **not** deliver a stable improvement over baseline
+- observed differences were small relative to variance
+
+<!-- end_slide -->
+
+Statistical Interpretation
+===
+<!-- incremental_lists: true -->
+<!-- list_item_newlines: 2 -->
+For the 10-run study:
+
+- **McNemar test:** no significant difference in accuracy between baseline and ZS-CoT
+- **Shapiro-Wilk test on token differences:** normality not rejected
+- **Paired t-test on mean tokens:** appropriate under the observed normality result
+
+<!-- pause -->
+Interpretation:
+
+- single-run prompt comparisons can be misleading
+- repeated trials are important on hard reasoning benchmarks
+- ZS-CoT effects here are modest relative to stochastic decoding variance
+
+<!-- end_slide -->
+
+Discussion
+===
+<!-- incremental_lists: true -->
+<!-- list_item_newlines: 2 -->
+Across the tested DeepSeek-R1 scales on AIME 2025:
+
+- generic **"Let's think step by step"** prompting was **not** a dependable improvement for the smaller base models studied
+- any gain from ZS-CoT was usually too small to justify its cost under this setup
+- the strongest gains were associated with **training-time reasoning optimization**, especially **distillation**
+
+<!-- pause -->
+This suggests that prompt-only reasoning is **benchmark-dependent** and **scale-dependent**, rather than universally effective.
+
+<!-- end_slide -->
+
+Limitations and Future Work
+===
+<!-- incremental_lists: true -->
+<!-- list_item_newlines: 2 -->
+Limitations:
+
+- Results are specific to **AIME 2025** and the tested model/configuration set
+- Latency and token costs remain partly hardware-dependent
+- The two-model extraction pipeline can introduce answer-extraction error
+
+<!-- pause -->
+Future work:
+
+- evaluate more math and multi-domain reasoning benchmarks
+- sweep model sizes more finely to locate transition points for ZS-CoT usefulness
+- explore cost-controlled methods such as selective reasoning or concise rationales
+- compare prompting against lightweight post-training methods more directly
+
+<!-- end_slide -->
+
+Conclusion
+===
+<!-- alignment: center -->
+
+This thesis finds that **ZS-CoT is not a reliable, cost-effective way to improve AIME 2025 performance for the smaller base models studied here.**
+
+<!-- alignment: left -->
+<!-- pause -->
+For this benchmark and evaluation setting:
+- **distilled reasoning models** gave the strongest accuracy gains
+- **ZS-CoT** did not consistently outperform direct answering
+- reasoning should be evaluated using **uncertainty estimates and efficiency metrics**, not accuracy alone
+
 <!-- end_slide -->
 
 References
 ===
-<!-- incremental_lists: false -->
-[1] Takeshi Kojima, Shixiang Shane Gu, Machel Reid, Yutaka Matsuo, and Yusuke
-Iwasawa. Large language models are zero-shot reasoners, 2023.
-<!-- new_line -->
+[1] Takeshi Kojima, Shixiang Shane Gu, Machel Reid, Yutaka Matsuo, and Yusuke Iwasawa. *Large Language Models are Zero-Shot Reasoners*, 2023.
 
-[2] DeepSeek-AI, Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Ruoyu
-Zhang, Runxin Xu, Qihao Zhu, Shirong Ma, Peiyi Wang, Xiao Bi, Xiaokang
-Zhang, Xingkai Yu, Yu Wu, et al. Deepseek-r1: Incentivizing reasoning capability
-in llms via reinforcement learning, 2025.
-<!-- new_line -->
+[2] DeepSeek-AI et al. *DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning*, 2025.
 
-[3] Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei
-Xia, Ed Chi, Quoc Le, and Denny Zhou. Chain-of-thought prompting elicits
-reasoning in large language models, 2023.
+[3] Jason Wei et al. *Chain-of-Thought Prompting Elicits Reasoning in Large Language Models*, 2023.
 
+[4] Long Ouyang et al. *Training Language Models to Follow Instructions with Human Feedback*, 2022.
+
+[5] Lin et al. Efficiency metric reference used in the thesis.
