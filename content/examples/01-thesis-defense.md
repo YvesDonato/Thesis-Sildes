@@ -64,7 +64,7 @@ To compare reasoning methods fairly, each tested family should have:
 - The **same parameter size**
 
 <!-- pause -->
-The DeepSeek-R1 family is useful because it provides explicit base-model matches, allowing direct comparison between:
+The DeepSeek-R1 family is passes because it provides explicit base-model matches, allowing direct comparison between:
 
 - **Base model**
 - **Base model + ZS-CoT**
@@ -262,11 +262,24 @@ Key takeaway:
 
 <!-- end_slide -->
 
+Main Results - Accuracy vs Efficiency
+===
+<!-- alignment: center -->
+
+This scatter plot summarizes the trade-off between **accuracy** and **efficiency** across the compared conditions.
+
+<!-- pause -->
+![](/examples/thesis/00001a.png)
+
+Figure: Accuracy vs Efficiency scatter plot for the evaluated models
+
+<!-- end_slide -->
+
 10-Run Repeated Evaluation
 ===
 <!-- incremental_lists: true -->
 <!-- list_item_newlines: 2 -->
-To measure run-to-run variability under stochastic decoding, a **10-run paired study** was conducted on **Qwen2.5-14B**.
+To measure run-to-run variability, a **10-run paired study** was conducted on **Qwen2.5-14B**.
 
 <!-- pause -->
 ```latex +render
@@ -316,7 +329,7 @@ Discussion
 ===
 <!-- incremental_lists: true -->
 <!-- list_item_newlines: 2 -->
-Across the tested DeepSeek-R1 scales on AIME 2025:
+Across the tested DeepSeek-R1 on AIME 2025:
 
 - generic **"Let's think step by step"** prompting was **not** a dependable improvement for the smaller base models studied
 - any gain from ZS-CoT was usually too small to justify its cost under this setup
