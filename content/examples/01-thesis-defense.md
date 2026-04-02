@@ -347,7 +347,6 @@ Limitations and Future Work
 Limitations:
 
 - Results are specific to **AIME 2025** and the tested model/configuration set
-- Latency and token costs remain partly hardware-dependent
 - The two-model extraction pipeline can introduce answer-extraction error
 
 <!-- pause -->
