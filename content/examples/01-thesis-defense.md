@@ -355,9 +355,8 @@ Future work:
 
 - evaluate more math and multi-domain reasoning benchmarks
 - sweep model sizes more finely to locate transition points for ZS-CoT usefulness
-- explore cost-controlled methods such as selective reasoning or concise rationales
-- compare prompting against lightweight post-training methods more directly
-
+- correlation tests between CoT and Baseline outputted raw text 
+- mechanistic interpretability tests may provide a clearer picture on why CoT is not effective on smaller models
 <!-- end_slide -->
 
 Conclusion
