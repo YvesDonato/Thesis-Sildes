@@ -94,6 +94,7 @@ Evaluation Metrics
 ===
 <!-- alignment: left -->
 Accuracy is measured as:
+<!-- pause -->
 
 $$
 \text{Accuracy}(\%) = 100 \cdot \frac{N_{\text{correct}}}{N}
